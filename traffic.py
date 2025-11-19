@@ -324,10 +324,21 @@ if st.sidebar.button("Swap origin/destination"):
     origin_val = st.session_state.get("origin_input", origin)
     dest_val = st.session_state.get("destination_input", destination)
 
+    # Swap the input values
     st.session_state["origin_input"], st.session_state["destination_input"] = (
         dest_val,
         origin_val,
     )
+    
+    # Increment widget versions to force widgets to reset with new values
+    st.session_state["origin_widget_version"] = st.session_state.get("origin_widget_version", 0) + 1
+    st.session_state["destination_widget_version"] = st.session_state.get("destination_widget_version", 0) + 1
+    
+    # Clear suggestions and last queries for both fields
+    st.session_state["origin_suggestions"] = []
+    st.session_state["origin_last_query"] = ""
+    st.session_state["destination_suggestions"] = []
+    st.session_state["destination_last_query"] = ""
 
     # Re-run so the inputs update visually
     st.rerun()

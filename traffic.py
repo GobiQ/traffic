@@ -99,11 +99,14 @@ def address_input_with_autocomplete(label: str, key: str, default_value: str, ap
         st.session_state[f"{key}_last_query"] = ""
     if f"{key}_suggestions" not in st.session_state:
         st.session_state[f"{key}_suggestions"] = []
+    if f"{key}_widget_version" not in st.session_state:
+        st.session_state[f"{key}_widget_version"] = 0
     
-    # Text input - use a unique key to track changes
-    input_key = f"{key}_text_input"
+    # Text input - use a versioned key to force reset when suggestion is selected
+    widget_version = st.session_state[f"{key}_widget_version"]
+    input_key = f"{key}_text_input_v{widget_version}"
     
-    # Store the previous value before getting the new one
+    # Get the current input value
     previous_input = st.session_state.get(f"{key}_input", default_value)
     
     current_input = st.sidebar.text_input(
@@ -141,11 +144,11 @@ def address_input_with_autocomplete(label: str, key: str, default_value: str, ap
             st.sidebar.caption("💡 Suggestions:")
             for i, suggestion in enumerate(suggestions):
                 if st.sidebar.button(suggestion, key=f"{key}_suggestion_{i}", use_container_width=True):
-                    # Update both the input state and the text_input widget's state
+                    # Update the input value and increment widget version to force reset
                     st.session_state[f"{key}_input"] = suggestion
-                    st.session_state[input_key] = suggestion  # Update the text_input widget's state
                     st.session_state[f"{key}_last_query"] = suggestion
                     st.session_state[f"{key}_suggestions"] = []
+                    st.session_state[f"{key}_widget_version"] += 1
                     st.rerun()
     
     return st.session_state[f"{key}_input"]

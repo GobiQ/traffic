@@ -287,9 +287,6 @@ st.write(
     "as a heatmap."
 )
 
-# ---- API Key ----
-st.sidebar.header("Google API Settings")
-
 # First, try to get the key from secrets (server-side only)
 # Wrap in try/except to handle case where no secrets file exists
 try:

@@ -479,7 +479,8 @@ if run_btn:
         )
         fig.update_layout(height=600)
 
-        # Make the heatmap clickable
+        # Use plotly_events for clickable heatmap
+        # This should render the chart AND enable click events
         selected_points = plotly_events(
             fig,
             click_event=True,

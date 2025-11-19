@@ -285,18 +285,17 @@ st.write(
 # ---- API Key ----
 st.sidebar.header("Google API Settings")
 
-# Try to read default key from Streamlit secrets (optional).
-# If no secrets.toml is present, just fall back to an empty string.
-try:
-    default_key = st.secrets["GOOGLE_MAPS_API_KEY"]
-except Exception:
-    default_key = ""
+# First, try to get the key from secrets (server-side only)
+api_key = st.secrets.get("GOOGLE_MAPS_API_KEY", "")
 
-api_key = st.sidebar.text_input(
-    "Google Maps API key",
-    value=default_key,
-    type="password"
-)
+# If no secret is set, fall back to user input (for local testing / BYO-key)
+if not api_key:
+    api_key = st.sidebar.text_input(
+        "Google Maps API key",
+        value="",
+        type="password",
+        help="Enter your own Google Maps API key",
+    )
 
 if not api_key:
     st.warning("Enter your Google Maps API key in the sidebar to run the analysis.")

@@ -1,14 +1,12 @@
 import os
 import time
 from datetime import datetime, timedelta, time as dtime
-from urllib.parse import urlencode
 
 import requests
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 from dateutil import tz
-from streamlit_plotly_events import plotly_events
 
 # ---------------------------------------------------------
 # Helpers
@@ -468,7 +466,6 @@ if run_btn:
         st.subheader("Travel time heatmap (minutes)")
         st.dataframe(heat_df.style.format("{:.1f}"))
 
-        # Build the heatmap figure
         fig = px.imshow(
             heat_df,
             labels=dict(x="Time of day", y="Day of week", color="Travel time (min)"),
@@ -478,55 +475,11 @@ if run_btn:
             color_continuous_scale="Turbo",
         )
         fig.update_layout(height=600)
-
-        # Use plotly_events for clickable heatmap
-        # This should render the chart AND enable click events
-        selected_points = plotly_events(
-            fig,
-            click_event=True,
-            hover_event=False,
-            select_event=False,
-            key="traffic_heatmap_events",
-        )
+        st.plotly_chart(fig, use_container_width=True)
 
         st.caption(
-            "Click any cell to see details below. "
-            "Estimates are based on Google's typical/predicted traffic for future "
-            "departure times, derived from historical traffic patterns."
-        )
-
-        # If user clicked a cell, show details + Google Maps link
-        if selected_points:
-            point = selected_points[0]
-            # For px.imshow with a DataFrame, x = column label, y = index label, z = value
-            cell_time_label = point.get("x")
-            cell_day = point.get("y")
-            cell_minutes = point.get("z")
-
-            st.markdown(
-                f"**Selected:** {cell_day} at {cell_time_label} — "
-                f"~{cell_minutes:.1f} minutes of travel time"
-            )
-
-            # Build a Google Maps directions URL for the current origin/destination/mode
-            query_params = {
-                "api": 1,
-                "origin": origin,
-                "destination": destination,
-                "travelmode": mode,
-            }
-            maps_url = "https://www.google.com/maps/dir/?" + urlencode(query_params)
-
-            st.markdown(f"[Open this route in Google Maps]({maps_url})")
-
-        # Allow user to download the heatmap data as CSV
-        csv_bytes = heat_df.to_csv().encode("utf-8")
-        st.download_button(
-            label="Download heatmap data as CSV",
-            data=csv_bytes,
-            file_name="traffic_heatmap.csv",
-            mime="text/csv",
-            key="download_heatmap_csv",
+            "Note: These estimates are based on Google's typical/predicted traffic for future "
+            "departure times, which themselves are derived from historical traffic patterns."
         )
 else:
     st.info("Set your parameters and click **Build traffic heatmap** to generate the chart.")

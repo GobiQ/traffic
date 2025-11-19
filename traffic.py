@@ -354,7 +354,7 @@ st.sidebar.header("Grid Settings")
 selected_days = st.sidebar.multiselect(
     "Days of week",
     options=DAYS_ORDER,
-    default=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    default=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 )
 
 # Create hour options with 12-hour format labels

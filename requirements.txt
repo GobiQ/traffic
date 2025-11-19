@@ -1,6 +1,6 @@
 streamlit
 requests
 pandas
-plotly
+plotly<6.0.0
 python-dateutil
 streamlit-plotly-events
